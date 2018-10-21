@@ -9,7 +9,8 @@ const int L_PRESS_TIME  = 2500;
 const int S_PRESS_TIME  = 250;
 
 const int XL_PRESS      = 3;
-const int L_PRESS       = 1;
-const int S_PRESS       = 2;
+const int L_PRESS       = 2;
+const int S_PRESS       = 1;
+const int N_PRESS       = 0;
 
 #endif

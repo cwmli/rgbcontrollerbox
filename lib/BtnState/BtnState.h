@@ -8,7 +8,7 @@ class BtnState {
   int pin;
   int lastPinState;
 
-  unsigned long lastTime;
+  unsigned long initialPressTime;
   unsigned long pressedTime;
   unsigned long debounceStartTime;
 
