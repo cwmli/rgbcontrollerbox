@@ -23,5 +23,11 @@ void setup() {
 }
 
 void loop() {
-    //int pin2State = pin2.get();
+    int pin2State = pin2.get();
+
+    if (pin2State == S_PRESS) {
+        controller.incrementBrightness();
+    } else if (pin2State == L_PRESS || pin2State == XL_PRESS) {
+        controller.cycleStyle();
+    } 
 }

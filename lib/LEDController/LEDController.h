@@ -12,11 +12,13 @@ enum LEDStyle {
 
 class LEDController {
   CRGB *leds;
-  LEDStyle ledState;
+  LEDStyle currentStyle;
+  int currentBrightness;
 
   LEDController() {
-    FastLED.setBrightness(DEFAULT_BRIGHTNESS);
-    ledState = LEDStyle::SOLID;
+    currentBrightness = DEFAULT_BRIGHTNESS;
+    FastLED.setBrightness(currentBrightness);
+    currentStyle = LEDStyle::SOLID;
   }
 
   ~LEDController() {
@@ -26,6 +28,12 @@ class LEDController {
 public:
 
   void init();
+
+  void incrementBrightness();
+
+  void decrementBrightness();
+
+  void cycleStyle();
 
   void setState(LEDStyle state);
 

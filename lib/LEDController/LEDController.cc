@@ -7,12 +7,38 @@ void LEDController::init() {
          .setCorrection(TypicalLEDStrip);
 }
 
+void LEDController::incrementBrightness() {
+  if (currentBrightness == 0) {
+    currentBrightness = 2;
+  } else {
+    currentBrightness = currentBrightness * 2 > MAX_BRIGHTNESS ? 0 : currentBrightness * 2;
+  }
+
+  setBrightness(currentBrightness);
+}
+
+void LEDController::decrementBrightness() {
+  if (currentBrightness == 2) {
+    currentBrightness = 0;
+  } else {
+    currentBrightness = currentBrightness == 0 ? currentBrightness : currentBrightness / 2;
+  }
+
+  setBrightness(currentBrightness);
+}
+
+void LEDController::cycleStyle() {
+  currentStyle = static_cast<LEDStyle>((currentStyle + 1) % (LEDStyle::CYCLE + 1));
+}
+
 void LEDController::setState(LEDStyle state) {
-  ledState = state;
+  currentStyle = state;
 }
 
 void LEDController::setBrightness(int brightness) {
-  FastLED.setBrightness(brightness);
+  if (brightness <= MAX_BRIGHTNESS) {
+    FastLED.setBrightness(brightness);
+  }
 }
 
 void LEDController::update() {

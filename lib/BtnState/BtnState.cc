@@ -1,5 +1,4 @@
 #include "BtnState.h"
-#include "Timings.h"
 
 int BtnState::get() {
   int currentPinState = digitalRead(pin);

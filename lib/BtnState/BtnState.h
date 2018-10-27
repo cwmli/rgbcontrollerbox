@@ -3,6 +3,8 @@
 
 #include <Arduino.h>
 
+#include "Timings.h"
+
 class BtnState {
 
   int pin;
