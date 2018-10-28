@@ -1,8 +1,6 @@
 #include "LEDController.h"
 
 void LEDController::init() {
-  leds = new CRGB[NUM_LEDS];
-
   FastLED.addLeds<LED_TYPE, LED_DATA, CLR_ORDR>(leds, NUM_LEDS)
          .setCorrection(TypicalLEDStrip);
 }
@@ -35,6 +33,8 @@ void LEDController::setState(LEDStyle state) {
   currentStyle = state;
   if (currentStyle == LEDStyle::BREATHING) {
     startBreatheTimer = millis();
+  } else if (currentStyle == LEDStyle::CYCLE) {
+    
   }
 }
 

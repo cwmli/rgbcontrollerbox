@@ -11,7 +11,7 @@ enum LEDStyle {
 };
 
 class LEDController {
-  CRGB *leds;
+  CRGB leds[NUM_LEDS];
   LEDStyle currentStyle;
   int currentBrightness;
 
@@ -21,17 +21,12 @@ class LEDController {
   // breatheTimer
   unsigned long startBreatheTimer;
 
+public:
   LEDController() {
     currentBrightness = DEFAULT_BRIGHTNESS;
     FastLED.setBrightness(currentBrightness);
     currentStyle = LEDStyle::SOLID;
   }
-
-  ~LEDController() {
-    delete leds;
-  }
-
-public:
 
   void init();
 
