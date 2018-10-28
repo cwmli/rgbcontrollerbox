@@ -33,14 +33,49 @@ void LEDController::cycleStyle() {
 
 void LEDController::setState(LEDStyle state) {
   currentStyle = state;
+  if (currentStyle == LEDStyle::BREATHING) {
+    startBreatheTimer = millis();
+  }
 }
 
-void LEDController::setBrightness(int brightness) {
+void LEDController::setBrightness(uint8_t brightness) {
   if (brightness <= MAX_BRIGHTNESS) {
     FastLED.setBrightness(brightness);
   }
 }
 
+void LEDController::setSolidColor(uint8_t r, uint8_t g, uint8_t b) {
+  oldColor = targetColor;
+  targetColor.setRGB(r, g, b);
+}
+
 void LEDController::update() {
-  // do Something
+  switch(currentStyle) {
+    case LEDStyle::SOLID:
+      solid(&oldColor, &targetColor, SDL_TRANSITION);
+      break;
+    case LEDStyle::BREATHING:
+      breathe();
+      break;
+    case LEDStyle::CYCLE:
+      break;
+  }
+
+  FastLED.show();
+}
+
+void LEDController::solid(CRGB *old, CRGB *target, int transition) {
+    nblend(*old, *target, transition);
+    fill_solid(leds, NUM_LEDS, *old);
+}
+
+void LEDController::breathe() {
+  solid(&oldColor, &targetColor, SDL_TRANSITION);
+  // ( e ^ ( sin(x) ) - 1 / e ) * ( currentBrightness / ( e - 1 / e ) )
+  FastLED.setBrightness(
+    (exp(sin((millis() - startBreatheTimer)/2000.0*PI)) - 0.36787944) * (currentBrightness / 2.35040238));
+}
+
+void LEDController::cycle() {
+  
 }

@@ -15,6 +15,12 @@ class LEDController {
   LEDStyle currentStyle;
   int currentBrightness;
 
+  CRGB oldColor;
+  CRGB targetColor;
+
+  // breatheTimer
+  unsigned long startBreatheTimer;
+
   LEDController() {
     currentBrightness = DEFAULT_BRIGHTNESS;
     FastLED.setBrightness(currentBrightness);
@@ -37,7 +43,17 @@ public:
 
   void setState(LEDStyle state);
 
-  void setBrightness(int brightness);
+  void setBrightness(uint8_t brightness);
+
+  void setSolidColor(uint8_t r, uint8_t g, uint8_t b);
 
   void update();
+
+private:
+
+  void solid(CRGB *old, CRGB *target, int transition);
+
+  void breathe();
+
+  void cycle();
 };

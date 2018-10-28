@@ -20,6 +20,9 @@ void setup() {
 
     // Setup aux button input
     pinMode(AUX_BTN, INPUT);
+
+    // Setup PIN0 is our LED switch
+    //pinMode(0, OUTPUT);
 }
 
 void loop() {

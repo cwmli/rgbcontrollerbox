@@ -8,5 +8,6 @@
 
 #define DEFAULT_BRIGHTNESS 16
 #define MAX_BRIGHTNESS     128 
+#define SDL_TRANSITION     36
 
 #endif
