@@ -4,33 +4,46 @@
 #include "BtnState.h"
 #include "LEDController.h"
 
-#define AUX_BTN 2
+#define AUX_BTN 5
 
 LEDController controller;
 BtnState pin2(AUX_BTN);
 
 void setup() {
     // Analog input setup (these are RESERVED)
-    // P5, use analogRead(0)
+    // P2, use analogRead(1)
     // P4, use analogRead(2)
     // P3, use analogRead(3)
+    pinMode(2, INPUT);
+    pinMode(4, INPUT);
+    pinMode(3, INPUT);
 
     // Setup LEDController
     controller.init();
 
-    // Setup aux button input
     pinMode(AUX_BTN, INPUT);
-
-    // Setup PIN0 is our LED switch
-    //pinMode(0, OUTPUT);
+    // Switch LED Btn
+    pinMode(0, OUTPUT);
 }
 
 void loop() {
-    int pin2State = pin2.get();
+    digitalWrite(0, HIGH);
+    uint8_t pin2State = pin2.get();
 
     if (pin2State == S_PRESS) {
         controller.incrementBrightness();
     } else if (pin2State == L_PRESS || pin2State == XL_PRESS) {
         controller.cycleStyle();
-    } 
+    }
+
+    // normalize rgb values
+    int16_t r = analogRead(3);
+    int16_t g = analogRead(2);
+    int16_t b = analogRead(1);
+    r = map(r, 0, 1023, 0, 255);
+    g = map(g, 0, 1023, 0, 255);
+    b = map(b, 0, 1023, 0, 255);
+
+    controller.setSolidColor(r, g, b);
+    controller.update();
 }

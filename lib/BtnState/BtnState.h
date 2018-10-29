@@ -3,25 +3,35 @@
 
 #include <Arduino.h>
 
-#include "Timings.h"
+// Numbers are in milliseconds
+#define DB_TIME       25
+
+#define XL_PRESS_TIME 5000
+#define L_PRESS_TIME  2500
+#define S_PRESS_TIME  250
+
+#define XL_PRESS      3
+#define L_PRESS       2
+#define S_PRESS       1
+#define N_PRESS       0
 
 class BtnState {
 
-  int pin;
-  int lastPinState;
+  uint8_t pin;
+  uint8_t lastPinState;
 
   unsigned long initialPressTime;
   unsigned long pressedTime;
   unsigned long debounceStartTime;
 
   public:
-    BtnState(int pin) : pin(pin) {
+    BtnState(uint8_t pin) : pin(pin) {
       lastPinState = LOW;
       pressedTime = 0;
       debounceStartTime = 0;
     }
 
-    int get();
+    uint8_t get();
 };
 
 #endif

@@ -1,7 +1,7 @@
 #include "BtnState.h"
 
-int BtnState::get() {
-  int currentPinState = digitalRead(pin);
+uint8_t BtnState::get() {
+  uint8_t currentPinState = digitalRead(pin);
 
   if (currentPinState != lastPinState) {
     debounceStartTime = millis();

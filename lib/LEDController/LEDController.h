@@ -1,19 +1,26 @@
 
 #include <FastLED.h>
-#include "Config.h"
+
+#define NUM_LEDS           42
+#define LED_DATA           1
+#define LED_TYPE           WS2811
+#define CLR_ORDR           GRB
+
+#define DEFAULT_BRIGHTNESS 16
+#define MAX_BRIGHTNESS     64 
+#define SDL_TRANSITION     36
 
 class CRGB;
 
 enum LEDStyle {
   SOLID,
-  BREATHING,
-  CYCLE
+  BREATHING
 };
 
 class LEDController {
   CRGB leds[NUM_LEDS];
   LEDStyle currentStyle;
-  int currentBrightness;
+  uint8_t currentBrightness;
 
   CRGB oldColor;
   CRGB targetColor;
@@ -26,6 +33,7 @@ public:
     currentBrightness = DEFAULT_BRIGHTNESS;
     FastLED.setBrightness(currentBrightness);
     currentStyle = LEDStyle::SOLID;
+    oldColor = targetColor = CRGB::Red;
   }
 
   void init();
@@ -46,9 +54,7 @@ public:
 
 private:
 
-  void solid(CRGB *old, CRGB *target, int transition);
+  void solid(CRGB *old, CRGB *target, uint8_t transition);
 
   void breathe();
-
-  void cycle();
 };
