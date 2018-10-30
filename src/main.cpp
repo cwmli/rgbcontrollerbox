@@ -4,7 +4,7 @@
 #include "BtnState.h"
 #include "LEDController.h"
 
-#define AUX_BTN 5
+#define AUX_BTN 0
 
 LEDController controller;
 BtnState pin2(AUX_BTN);
@@ -22,12 +22,9 @@ void setup() {
     controller.init();
 
     pinMode(AUX_BTN, INPUT);
-    // Switch LED Btn
-    pinMode(0, OUTPUT);
 }
 
 void loop() {
-    digitalWrite(0, HIGH);
     uint8_t pin2State = pin2.get();
 
     if (pin2State == S_PRESS) {
