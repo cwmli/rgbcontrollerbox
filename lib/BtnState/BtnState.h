@@ -6,9 +6,9 @@
 // Numbers are in milliseconds
 #define DB_TIME       25
 
-#define XL_PRESS_TIME 5000
-#define L_PRESS_TIME  2500
-#define S_PRESS_TIME  250
+#define XL_PRESS_TIME 1500
+#define L_PRESS_TIME  250
+#define S_PRESS_TIME  25
 
 #define XL_PRESS      3
 #define L_PRESS       2

@@ -3,6 +3,8 @@
 void LEDController::init() {
   FastLED.addLeds<LED_TYPE, LED_DATA, CLR_ORDR>(leds, NUM_LEDS)
          .setCorrection(TypicalLEDStrip);
+
+  FastLED.setBrightness(DEFAULT_BRIGHTNESS);
 }
 
 void LEDController::incrementBrightness() {
@@ -15,25 +17,31 @@ void LEDController::incrementBrightness() {
   setBrightness(currentBrightness);
 }
 
-void LEDController::decrementBrightness() {
-  if (currentBrightness == 2) {
-    currentBrightness = 0;
+void LEDController::incrementSpeed() {
+  if (speed == 1000) {
+    speed = 250;
   } else {
-    currentBrightness = currentBrightness == 0 ? currentBrightness : currentBrightness / 2;
+    speed += 250;
   }
-
-  setBrightness(currentBrightness);
 }
 
 void LEDController::cycleStyle() {
-  currentStyle = static_cast<LEDStyle>((currentStyle + 1) % (LEDStyle::BREATHING + 1));
+  currentStyle = (currentStyle + 1) % 3;
 }
 
-void LEDController::setState(LEDStyle state) {
+void LEDController::setState(uint8_t state) {
   currentStyle = state;
-  if (currentStyle == LEDStyle::BREATHING) {
-    startBreatheTimer = millis();
+  if (currentStyle > 0) {
+    styleTimer = millis();
+  } 
+  
+  if (currentStyle == 2) {
+    cycle = 0;
   }
+}
+
+uint8_t LEDController::getState() {
+  return currentStyle;
 }
 
 void LEDController::setBrightness(uint8_t brightness) {
@@ -43,28 +51,51 @@ void LEDController::setBrightness(uint8_t brightness) {
 }
 
 void LEDController::setSolidColor(uint8_t r, uint8_t g, uint8_t b) {
-  oldColor = targetColor;
-  targetColor.setRGB(r, g, b);
+  color.setRGB(r, g, b);
 }
 
 void LEDController::update() {
-  if (currentStyle == LEDStyle::SOLID) {
-      solid(&oldColor, &targetColor, SDL_TRANSITION);
+  if (currentStyle == 0) {
+    fill_solid(leds, NUM_LEDS, color);
+  } else if (currentStyle == 1) {
+    breathe();
   } else {
-      breathe();
+    rainbow();
   }
 
   FastLED.show();
 }
 
-void LEDController::solid(CRGB *old, CRGB *target, uint8_t transition) {
-    nblend(*old, *target, transition);
-    fill_solid(leds, NUM_LEDS, *old);
+void LEDController::breathe() {
+  fill_solid(leds, NUM_LEDS, color);
+  // ( e ^ ( sin((x * 250) / speed) ) - 1 / e ) * ( currentBrightness / ( e - 1 / e ) )
+  float var = (exp(sin((millis() - styleTimer) * 0.39269908 / speed)) - 0.36787944) * (currentBrightness / 2.35040238);
+  setBrightness(var);
 }
 
-void LEDController::breathe() {
-  solid(&oldColor, &targetColor, SDL_TRANSITION);
-  // ( e ^ ( sin(x) ) - 1 / e ) * ( currentBrightness / ( e - 1 / e ) )
-  FastLED.setBrightness(
-    (exp(sin((millis() - startBreatheTimer)/2000.0*PI)) - 0.36787944) * (currentBrightness / 2.35040238));
+void LEDController::rainbow() {
+  if (cycle == 255) {
+    cycle = 0;
+  }
+
+  fill_solid(leds, NUM_LEDS, wheel(cycle & 255));
+
+  if (millis() - styleTimer > speed / 5) {
+    cycle = cycle + 1;
+    styleTimer = millis();
+  }
+}
+
+CRGB LEDController::wheel(byte pos) {
+  if(pos < 85) {
+    return CRGB(pos * 3, 255 - pos * 3, 0);
+  } 
+  else if(pos < 170) {
+    pos -= 85;
+    return CRGB(255 - pos * 3, 0, pos * 3);
+  } 
+  else {
+    pos -= 170;
+    return CRGB(0, pos * 3, 255 - pos * 3);
+  }
 }

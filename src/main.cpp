@@ -1,5 +1,4 @@
 #include <Arduino.h>
-#include <FastLED.h>
 
 #include "BtnState.h"
 #include "LEDController.h"
@@ -21,26 +20,32 @@ void setup() {
     // Setup LEDController
     controller.init();
 
+    pinMode(1, OUTPUT);
     pinMode(AUX_BTN, INPUT);
 }
 
 void loop() {
     uint8_t pin2State = pin2.get();
+    uint8_t ctrlState = controller.getState();
 
     if (pin2State == S_PRESS) {
         controller.incrementBrightness();
-    } else if (pin2State == L_PRESS || pin2State == XL_PRESS) {
+    } else if (pin2State == L_PRESS) {
+        controller.incrementSpeed();
+    } else if (pin2State == XL_PRESS) {
         controller.cycleStyle();
     }
 
-    // normalize rgb values
-    int16_t r = analogRead(3);
-    int16_t g = analogRead(2);
-    int16_t b = analogRead(1);
-    r = map(r, 0, 1023, 0, 255);
-    g = map(g, 0, 1023, 0, 255);
-    b = map(b, 0, 1023, 0, 255);
+    if (ctrlState != 2) {
+        // normalize rgb values
+        int16_t r = analogRead(3);
+        int16_t g = analogRead(2);
+        int16_t b = analogRead(1);
+        r = r * 0.249;
+        g = g * 0.249;
+        b = b * 0.249;
 
-    controller.setSolidColor(r, g, b);
+        controller.setSolidColor(r, g, b);
+    }
     controller.update();
 }

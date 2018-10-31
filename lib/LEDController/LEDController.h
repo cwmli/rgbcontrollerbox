@@ -1,4 +1,7 @@
 
+#ifndef LEDCONTROLLER_H
+#define LEDCONTROLLER_H
+
 #include <FastLED.h>
 
 #define NUM_LEDS           42
@@ -12,39 +15,39 @@
 
 class CRGB;
 
-enum LEDStyle {
-  SOLID,
-  BREATHING
-};
-
 class LEDController {
   CRGB leds[NUM_LEDS];
-  LEDStyle currentStyle;
+  // LET 0 be SOLID
+  //     1 be BREATHING
+  //     2 be COLOR CYCLE
+  uint8_t currentStyle;
   uint8_t currentBrightness;
 
-  CRGB oldColor;
-  CRGB targetColor;
+  CRGB color;
 
-  // breatheTimer
-  unsigned long startBreatheTimer;
+  // breatheTimer, cycleTimer
+  unsigned long styleTimer;
+  uint8_t cycle;
+  uint16_t speed;
 
 public:
   LEDController() {
     currentBrightness = DEFAULT_BRIGHTNESS;
-    FastLED.setBrightness(currentBrightness);
-    currentStyle = LEDStyle::SOLID;
-    oldColor = targetColor = CRGB::Red;
+    currentStyle = 2;
+    speed = 250;
   }
 
   void init();
 
   void incrementBrightness();
 
-  void decrementBrightness();
+  void incrementSpeed();
 
   void cycleStyle();
 
-  void setState(LEDStyle state);
+  void setState(uint8_t state);
+
+  uint8_t getState();
 
   void setBrightness(uint8_t brightness);
 
@@ -54,7 +57,10 @@ public:
 
 private:
 
-  void solid(CRGB *old, CRGB *target, uint8_t transition);
-
   void breathe();
+
+  void rainbow();
+
+  CRGB wheel(byte pos);
 };
+#endif
